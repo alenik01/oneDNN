@@ -54,7 +54,8 @@ status_t conv_desc_init(convolution_desc_t *conv_desc, prop_kind_t prop_kind,
     cd.diff_weights_desc = cd.weights_desc = zero_md();
     cd.diff_bias_desc = cd.bias_desc = zero_md();
 
-    const bool is_fwd = one_of(prop_kind, forward_training, forward_inference);
+    const bool is_fwd = one_of(prop_kind, forward_training, forward_inference,
+            forward_training_no_acl);
     const bool with_bias
             = bias_desc && bias_desc->format_kind != format_kind::undef;
     const bool with_groups = weights_desc->ndims == src_desc->ndims + 1;
@@ -134,7 +135,8 @@ status_t dnnl_convolution_forward_desc_init(convolution_desc_t *conv_desc,
         const memory_desc_t *src_desc, const memory_desc_t *weights_desc,
         const memory_desc_t *bias_desc, const memory_desc_t *dst_desc,
         const dims_t strides, const dims_t padding_l, const dims_t padding_r) {
-    if (!one_of(prop_kind, forward_training, forward_inference))
+    if (!one_of(prop_kind, forward_training, forward_inference,
+                forward_training_no_acl))
         return invalid_arguments;
     return dnnl::impl::conv_desc_init(conv_desc, prop_kind, alg_kind, src_desc,
             weights_desc, bias_desc, dst_desc, strides, nullptr, padding_l,
@@ -147,7 +149,8 @@ status_t dnnl_dilated_convolution_forward_desc_init(
         const memory_desc_t *weights_desc, const memory_desc_t *bias_desc,
         const memory_desc_t *dst_desc, const dims_t strides,
         const dims_t dilates, const dims_t padding_l, const dims_t padding_r) {
-    if (!one_of(prop_kind, forward_training, forward_inference))
+    if (!one_of(prop_kind, forward_training, forward_inference,
+                forward_training_no_acl))
         return invalid_arguments;
     return dnnl::impl::conv_desc_init(conv_desc, prop_kind, alg_kind, src_desc,
             weights_desc, bias_desc, dst_desc, strides, dilates, padding_l,

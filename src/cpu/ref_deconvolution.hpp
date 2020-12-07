@@ -66,7 +66,7 @@ static status_t conv_descr_create(const deconvolution_desc_t *dd,
         d_weights_d = &dd->weights_desc;
     } else if (dd->prop_kind == backward_data) {
         assert(src_dt == data_type::undef);
-        prop_kind = forward_training;
+        prop_kind = forward_training_no_acl;
         src_md = &dd->diff_dst_desc;
         dst_md = &dd->diff_src_desc;
         d_weights_d = &dd->weights_desc;

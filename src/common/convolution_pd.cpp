@@ -39,7 +39,8 @@ memory_desc_t *conv_prop_invariant_bia_d(convolution_desc_t *desc) {
 }
 
 memory_desc_t *conv_prop_invariant_dst_d(convolution_desc_t *desc) {
-    return utils::one_of(desc->prop_kind, forward_inference, forward_training)
+    return utils::one_of(desc->prop_kind, forward_inference, forward_training,
+                   forward_training_no_acl)
             ? &desc->dst_desc
             : &desc->diff_dst_desc;
 }

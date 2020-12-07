@@ -599,6 +599,7 @@ const char *dnnl_fmt_tag2str(dnnl_format_tag_t v) {
 const char *dnnl_prop_kind2str(dnnl_prop_kind_t v) {
     if (v == dnnl_prop_kind_undef) return "undef";
     if (v == dnnl_forward_training) return "forward_training";
+    if (v == dnnl_forward_training_no_acl) return "forward_training_no_acl";
     if (v == dnnl_forward_inference) return "forward_inference";
     if (v == dnnl_forward_scoring) return "forward_scoring";
     if (v == dnnl_forward) return "forward";

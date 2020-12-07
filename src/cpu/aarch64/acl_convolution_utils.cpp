@@ -57,13 +57,14 @@ status_t acl_init_conf(acl_conv_conf_t &acp, memory_desc_t &src_md,
     if (!is_fwd) return status::unimplemented;
 
     const int with_groups = wei_d.ndims() == src_d.ndims() + 1;
+    const int ngroups = with_groups ? wei_d.dims()[0] : 1;
     const int ndims = src_d.ndims();
     const bool is_1d = ndims == 3;
     const bool is_3d = ndims == 5;
     bool is_nspc;
 
     // Compute Library unsupported shape scenarios
-    if (one_of(true, is_3d, is_1d, with_groups)) {
+    if (one_of(true, is_3d, is_1d, ngroups != 1)) {
         return status::unimplemented;
     }
 
@@ -135,12 +136,26 @@ status_t acl_init_conf(acl_conv_conf_t &acp, memory_desc_t &src_md,
         is_nspc = utils::one_of(src_tag, nhwc);
 
         memory_desc_t want_wei_md = weights_md;
-        auto wei_tag = is_nspc ? ohwi : oihw;
+        auto wei_tag = is_nspc ? (with_groups ? gohwi : ohwi)
+                               : (with_groups ? goihw : oihw);
         CHECK(memory_desc_init_by_tag(want_wei_md, wei_tag));
 
         // Compute Library does not support mismatching layouts
-        if ((src_tag != wei_tag) || (src_tag != dst_tag))
-            return status::unimplemented;
+        if (src_tag != dst_tag) return status::unimplemented;
+        // Weights data layout for goihw with ngroups == 1 is the same to oihw,
+        // and for gohwi with ngroups == 1 is the same to ohwi if
+        // padded_dims[0] == 1, i.e. no padding for the group dimension
+        if (with_groups) {
+            const bool are_layouts_supported
+                    = (wei_tag == goihw && src_tag == nchw)
+                    || (wei_tag == gohwi && src_tag == nhwc);
+            const bool with_group_dim_padding = wei_d.padded_dims()[0] != 1;
+            if (with_group_dim_padding || !(are_layouts_supported)) {
+                return status::unimplemented;
+            }
+        } else {
+            if (src_tag != wei_tag) return status::unimplemented;
+        }
 
         if (weights_md.format_kind == format_kind::any) {
             weights_md = want_wei_md;

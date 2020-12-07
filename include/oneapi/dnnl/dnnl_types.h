@@ -869,6 +869,8 @@ typedef enum {
     /// Forward data propagation (training mode). In this mode primitives
     /// perform computations necessary for subsequent backward propagation.
     dnnl_forward_training = 64,
+    /// Arbitrary number (467) not being used yet as enum
+    dnnl_forward_training_no_acl = 467,
     /// Forward data propagation (inference mode). In this mode primitives
     /// perform only computations that are necessary for inference and omit
     /// computations that are necessary only for backward propagation.

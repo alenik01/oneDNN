@@ -356,7 +356,7 @@ const pd_create_f *get_convolution_impl_list(const convolution_desc_t *desc) {
     static const pd_create_f empty_list[] = {nullptr};
 
     prop_kind_t prop_kind = utils::one_of(desc->prop_kind, forward_training,
-                                    forward_inference)
+                                    forward_inference, forward_training_no_acl)
             ? forward
             : desc->prop_kind;
     conv_impl_key_t key {

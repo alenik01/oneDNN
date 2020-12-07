@@ -146,7 +146,8 @@ struct convolution_pd_t : public primitive_desc_t {
 
     bool is_fwd() const {
         return utils::one_of(desc_.prop_kind, prop_kind::forward_training,
-                prop_kind::forward_inference);
+                prop_kind::forward_inference,
+                prop_kind::forward_training_no_acl);
     }
 
     bool is_bwd_d() const {

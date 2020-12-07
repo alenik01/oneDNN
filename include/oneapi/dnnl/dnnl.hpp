@@ -438,6 +438,9 @@ enum class prop_kind {
     /// Forward data propagation (training mode). In this mode, primitives
     /// perform computations necessary for subsequent backward propagation.
     forward_training = dnnl_forward_training,
+    /// Forward data propagation without a call to Compute Library, this is
+    /// for temporary internal use
+    forward_training_no_acl = dnnl_forward_training_no_acl,
     /// Forward data propagation (inference mode). In this mode, primitives
     /// perform only computations that are necessary for inference and omit
     /// computations that are necessary only for backward propagation.
